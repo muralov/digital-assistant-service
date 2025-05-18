@@ -6,9 +6,6 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import org.springframework.stereotype.Repository;
 
-import com.home.assistant.exception.AssistantExistsException;
-import com.home.assistant.model.Assistant;
-
 @Repository("inMemoryRepository")
 public class InMemoryRepository implements AssistantRepository {
 
@@ -16,22 +13,9 @@ public class InMemoryRepository implements AssistantRepository {
     private final Map<String, String> assistantResponses = new ConcurrentHashMap<>();
 
     @Override
-    public Assistant create(Assistant assistant) {
-        // Check if the assistant already exists
-        String value = assistantResponses.putIfAbsent(assistant.getName(), assistant.getResponse());
-        if (value == null) {
-            logger.info("digital assistant created in memory: {}", assistant.getName());
-            return assistant;
-        } else {
-            logger.error("Assistant '" + assistant.getName() + "' already exists");
-            throw new AssistantExistsException("Assistant '" + assistant.getName() + "' already exists");
-        }
-    }
-    
-    @Override
-    public Assistant update(Assistant assistant) {
+    public Assistant save(Assistant assistant) {
         assistantResponses.put(assistant.getName(), assistant.getResponse());
-        logger.info("digital assistant saved in memory: {}", assistant.getName());
+        logger.info("digital assistant '{}' saved in memory", assistant.getName());
         return assistant;
     }
     

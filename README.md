@@ -16,14 +16,14 @@ git clone git@github.com:muralov/digital-assistant-service.git
 cd digital-assistant-service
 ```
 3. (Optional) You can use Redis storage to store digital assistants data. For that, you have to install Redis without authentication. This prevents loss of data after application restart. You can use either of the following options:
-- **Local run**: you can have redis run locally and configure it in application.properties
+- **Local run**: you can have redis run locally and configure it in `application.properties`
     ```properties
     spring.data.redis.host=localhost
     spring.data.redis.port=6379
     ```
 - **Kubernetes run**: you can deploy [Redis](https://redis.io/docs/latest/operate/kubernetes/deployment/helm/) in a K8s cluster and you have to configure it in the app with k8s config map in `config/k8s-resources.yaml`.
 
-> **NOTE**: By default, it uses in-memory to store assistant responses.
+> **NOTE**: By default, it uses in-memory if Redis config is unavailable.
 
 ### Steps to run the Digital Assistant locally
 
@@ -34,23 +34,16 @@ cd digital-assistant-service
 
 2. Create a new digital assistant with the following name and response:
 ```bash
-curl -v -H "Content-Type: application/json" -X POST \
-    -d '{"name":"local-assistant", "response":"Hello, I am sample-name assistant. What can I do for you!"}' \
-    "localhost:8080/assistants"
+curl -v -H "Content-Type: application/json" -X PUT \
+    -d '{"response":"Hello, I am dummy assistant. What can I do for you!"}' \
+    "localhost:8080/assistants/sample-name"
 ```
 
 3. Call the digital assistant
 ```bash
 curl -v -H "Content-Type: application/json" -X POST \
     -d '{"message":"hello"}' \
-    "localhost:8080/assistants/local-assistant/chat"
-```
-
-4. (Optional) You can update digital assistant with a new response:
-```bash
-curl -v -H "Content-Type: application/json" -X PUT \
-    -d 'new response' \
-    "localhost:8080/assistants/local-assistant"
+    "localhost:8080/assistants/sample-name/chat"
 ```
 
 ## Installation in a Kubernetes cluster
@@ -86,9 +79,9 @@ kubectl apply -f config/kyma-apirule.yaml -n assistant
 
 5. Create a new digital assistant with the following name and response:
 ```bash
-curl -v -H "Content-Type: application/json" -X POST \
-    -d '{"name":"sample-name", "response":"Hello, I am sample-name assistant. What can I do for you?"}' \
-    "https://digital-assistant.mur-kc.kymatunas.shoot.canary.k8s-hana.ondemand.com/assistants"
+curl -v -H "Content-Type: application/json" -X PUT \
+    -d '{"response":"Hello, I am dummy assistant. What can I do for you!"}' \
+    "https://digital-assistant.mur-kc.kymatunas.shoot.canary.k8s-hana.ondemand.com/assistants/sample-name"
 ```
 
 6. Call the assistant to get the response:
@@ -96,11 +89,4 @@ curl -v -H "Content-Type: application/json" -X POST \
 curl -v -H "Content-Type: application/json" -X POST \
     -d '{"message":"hello"}' \
     "https://digital-assistant.mur-kc.kymatunas.shoot.canary.k8s-hana.ondemand.com/assistants/sample-name/chat"
-```
-
-4. (Optional) You can update digital assistant with a new response:
-```bash
-curl -v -H "Content-Type: application/json" -X PUT \
-    -d 'new response' \
-    "https://digital-assistant.mur-kc.kymatunas.shoot.canary.k8s-hana.ondemand.com/assistants/sample-name"
 ```

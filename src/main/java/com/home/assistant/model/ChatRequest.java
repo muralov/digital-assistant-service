@@ -3,7 +3,7 @@ package com.home.assistant.model;
 import jakarta.validation.constraints.NotBlank;
 
 public class ChatRequest {
-    @NotBlank(message = "Message is required")
+    @NotBlank(message = "message field is required")
     private String message;
 
     // Constructor

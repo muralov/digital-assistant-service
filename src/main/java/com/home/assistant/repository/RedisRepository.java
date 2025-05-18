@@ -10,9 +10,6 @@ import org.springframework.data.redis.connection.lettuce.LettuceConnectionFactor
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Repository;
 
-import com.home.assistant.exception.AssistantExistsException;
-import com.home.assistant.model.Assistant;
-
 @Repository("redisRepository")
 public class RedisRepository implements AssistantRepository {
 
@@ -33,21 +30,9 @@ public class RedisRepository implements AssistantRepository {
     }
 
     @Override
-    public Assistant create(Assistant assistant) {
-        if (this.template.opsForValue().setIfAbsent(STRING_KEY_PREFIX + assistant.getName(), assistant.getResponse())) {
-            logger.info("Digital assistant created in redis: {}", assistant.getName());
-        } else {
-            logger.error("Assistant '" + assistant.getName() + "' already exists");
-            throw new AssistantExistsException("Assistant '" + assistant.getName() + "' already exists");
-        }
-        
-        return assistant;
-    }
-
-    @Override
-    public Assistant update(Assistant assistant) {
+    public Assistant save(Assistant assistant) {
         this.template.opsForValue().set(STRING_KEY_PREFIX + assistant.getName(), assistant.getResponse());
-        logger.info("digital assistant saved in redis: {}", assistant.getName());
+        logger.info("digital assistant  '{}' saved in redis", assistant.getName());
         return assistant;
     }
     

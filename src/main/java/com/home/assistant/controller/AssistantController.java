@@ -10,8 +10,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.home.assistant.exception.AssistantNotFoundException;
-import com.home.assistant.model.Assistant;
+import com.home.assistant.model.AssistantResponse;
 import com.home.assistant.model.ChatRequest;
+import com.home.assistant.repository.Assistant;
 import com.home.assistant.repository.AssistantRepository;
 
 import jakarta.validation.Valid;
@@ -29,21 +30,23 @@ public class AssistantController {
         this.assistantRepository = assistantRepository;
     }
 
-    @PostMapping
-    public Assistant createAssistant(@Valid @RequestBody Assistant newAssistant) {
-        return assistantRepository.create(newAssistant);
-    }
-
     @PutMapping("/{name}")
-    public Assistant updateAssistantResponse(@PathVariable String name, @Valid @RequestBody String newResponse) {
-        return assistantRepository.update(new Assistant(name, newResponse));
+    public AssistantResponse createOrUpdateAssistant(@PathVariable String name, @Valid @RequestBody AssistantResponse assistantResponse) {
+        assistantRepository.save(new Assistant(name, assistantResponse.getResponse()));
+        return assistantResponse;
     }
 
     @PostMapping("/{name}/chat")
-    public Assistant chat(@PathVariable String name, @Valid @RequestBody ChatRequest request) {
-        return assistantRepository.get(name).orElseThrow(() -> {
+    public String chat(@PathVariable String name, @Valid @RequestBody ChatRequest request) {
+        Assistant assistant = assistantRepository.get(name).orElseThrow(() -> {
             logger.error("Assistant '{}' not found", name);
             return new AssistantNotFoundException(name);
         });
+        
+        // Log the incoming message if needed
+        logger.info("Received message for assistant {}: {}", name, request.getMessage());
+        
+        // Return the assistant's response string
+        return assistant.getResponse();
     }
 }

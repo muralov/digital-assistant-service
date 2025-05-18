@@ -32,7 +32,7 @@ spec:
         env:
         - name: SPRING_CONFIG_LOCATION
           value: file:/app/application.properties
-        image: muralov/digital-assistant:v9
+        image: muralov/digital-assistant:latest
         ports:
         - containerPort: 8080
         resources:
