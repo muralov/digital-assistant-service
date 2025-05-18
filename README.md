@@ -54,13 +54,14 @@ curl -v -H "Content-Type: application/json" -X PUT \
 ```
 
 ## Installation in a Kubernetes cluster
+Currently, it is already deployed a K8s cluster (in Google Cloud) and exposed to the internet. You can call with curl instructions below. The application host is `https://digital-assistant.mur-kc.kymatunas.shoot.canary.k8s-hana.ondemand.com/`.
 
-### Pre-requisites
+### Pre-requisites for Installation
 - Kubernetes cluster
 - [Kymya Istio module](https://github.com/kyma-project/istio) - follow the instructions to install Istio in your cluster.
 - [Kyma Gateway module](https://github.com/kyma-project/api-gateway) - follow the instructions to install Kyma Gateway in your cluster.
 
-### Steps to run the Digital Assistant in a Kubernetes cluster
+### Steps to run the Digital Assistant
 
 1. Create a namespace for the Digital Assistant
 ```bash
