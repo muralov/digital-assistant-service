@@ -17,16 +17,8 @@ public class RedisRepository implements AssistantRepository {
     private static final Logger logger = LoggerFactory.getLogger(RedisRepository.class);
     private final RedisTemplate<String, String> template;
 
-    public RedisRepository(
-        @Value("${redis.host:localhost}") String redisHost,
-        @Value("${redis.port:6379}") int redisPort) {
-        // Set your Redis host and port here
-        RedisConnectionFactory connectionFactory = new LettuceConnectionFactory(redisHost, redisPort);
-        ((LettuceConnectionFactory) connectionFactory).afterPropertiesSet();
-
-        this.template = new RedisTemplate<>();
-        this.template.setConnectionFactory(connectionFactory);
-        this.template.afterPropertiesSet();
+    public RedisRepository(RedisTemplate<String, String> template) {
+        this.template = template;
     }
 
     @Override

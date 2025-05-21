@@ -2,9 +2,10 @@ package com.home.assistant.config;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Profile;
+import org.springframework.data.redis.core.RedisTemplate;
 
 import com.home.assistant.repository.AssistantRepository;
 import com.home.assistant.repository.InMemoryRepository;
@@ -15,20 +16,17 @@ public class RepositoryConfig {
 
     private final static Logger logger = LoggerFactory.getLogger(RepositoryConfig.class);
 
-    @Value("${spring.data.redis.host:}")
-    private String redisHost;
-
-    @Value("${spring.data.redis.port:}")
-    private String redisPort;
+    @Bean
+    @Profile({"in-memory", "default"})
+    public AssistantRepository inMemoryRepository() {
+        logger.info("Using InMemory store");
+        return new InMemoryRepository();
+    }
 
     @Bean
-    public AssistantRepository assistantRepository() {
-        if (redisHost != null && !redisHost.isEmpty() && redisPort != null && !redisPort.isEmpty()) {
-            logger.info("Using Redis storage with host: {} and port: {}", redisHost, redisPort);
-            return new RedisRepository(redisHost, Integer.parseInt(redisPort));
-        } else {
-            logger.info("Using InMemory store since Redis is not configured");
-            return new InMemoryRepository();
-        }
+    @Profile("redis")
+    public AssistantRepository redisRepository(RedisTemplate<String, String> template) {
+        logger.info("Using Redis storage");
+        return new RedisRepository(template);
     }
 }

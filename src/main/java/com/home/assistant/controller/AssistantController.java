@@ -43,10 +43,7 @@ public class AssistantController {
             return new AssistantNotFoundException(name);
         });
         
-        // Log the incoming message if needed
-        logger.info("Received message for assistant {}: {}", name, request.getMessage());
-        
-        // Return the assistant's response string
-        return assistant.getResponse();
+        // Return the formatted message
+        return "You said: " + request.getMessage();
     }
 }
